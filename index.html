@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TaskFlow | Manage Your Work</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <div class="brand">
+                <div class="brand-icon">T</div>
+                <h2>TaskFlow<span>.</span></h2>
+            </div>
+
+            <div class="workspace">
+                <div class="workspace-avatar">U</div>
+                <div>
+                    <h4>Personal Workspace</h4>
+                    <p>Free Plan</p>
+                </div>
+                <span class="arrow">⌄</span>
+            </div>
+
+            <div class="sidebar-section">
+                <p class="section-label">MENU</p>
+
+                <nav>
+                    <a href="#" class="nav-item active">
+                        <span class="nav-icon">◫</span>
+                        Overview
+                    </a>
+
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">▤</span>
+                        My Tasks
+                        <span class="nav-count">12</span>
+                    </a>
+
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">◷</span>
+                        Upcoming
+                    </a>
+
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">✓</span>
+                        Completed
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-section">
+                <p class="section-label">WORKSPACE</p>
+
+                <nav>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">▦</span>
+                        Projects
+                    </a>
+
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">⚙</span>
+                        Settings
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="upgrade-card">
+                    <div class="upgrade-icon">✦</div>
+                    <h4>Upgrade your plan</h4>
+                    <p>Get more space to organize your work.</p>
+                    <button class="upgrade-btn">Explore Plans</button>
+                </div>
+
+                <div class="profile">
+                    <div class="profile-avatar">U</div>
+                    <div class="profile-info">
+                        <h4>Usman Tahir</h4>
+                        <p>Personal Account</p>
+                    </div>
+                    <span class="profile-menu">•••</span>
+                </div>
+            </div>
+
+        </aside>
+
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Topbar -->
+            <header class="topbar">
+
+                <div class="breadcrumb">
+                    <span>Workspace</span>
+                    <span>/</span>
+                    <strong>Overview</strong>
+                </div>
+
+                <div class="topbar-right">
+
+                    <div class="search-box">
+                        <span>⌕</span>
+                        <input type="text" id="searchInput" placeholder="Search tasks...">
+                        <kbd>⌘ K</kbd>
+                    </div>
+
+                    <button class="notification-btn" aria-label="Notifications">
+                        ♧
+                        <span></span>
+                    </button>
+
+                    <div class="topbar-avatar">U</div>
+
+                </div>
+
+            </header>
+
+
+            <!-- Page Content -->
+            <div class="page-content">
+
+                <!-- Welcome -->
+                <section class="welcome-section">
+
+                    <div>
+                        <p class="date-label">MONDAY, NOVEMBER 09, 2026</p>
+                        <h1>Good morning, Usman <span>✦</span></h1>
+                        <p class="welcome-description">
+                            Here's what's happening with your projects today.
+                        </p>
+                    </div>
+
+
+                </section>
+
+
+                <!-- Statistics -->
+                <section class="stats-grid">
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span>Total Tasks</span>
+                            <div class="stat-icon purple">▤</div>
+                        </div>
+                        <h2>24</h2>
+                        <p><span class="positive">↑ 12%</span> from last week</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span>In Progress</span>
+                            <div class="stat-icon orange">◷</div>
+                        </div>
+                        <h2>08</h2>
+                        <p>Tasks currently active</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span>Completed</span>
+                            <div class="stat-icon green">✓</div>
+                        </div>
+                        <h2>12</h2>
+                        <p><span class="positive">↑ 8%</span> from last week</p>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-top">
+                            <span>Overdue</span>
+                            <div class="stat-icon red">!</div>
+                        </div>
+                        <h2>04</h2>
+                        <p><span class="negative">Needs attention</span></p>
+                    </div>
+
+                </section>
+
+
+                <!-- Progress and Activity -->
+                <section class="middle-grid">
+
+                    <div class="content-card progress-card">
+
+                        <div class="card-heading">
+                            <div>
+                                <h3>Weekly Progress</h3>
+                                <p>Track your productivity</p>
+                            </div>
+
+                            <button class="more-btn">•••</button>
+                        </div>
+
+                        <div class="progress-content">
+
+                            <div class="progress-circle">
+                                <div class="circle-inner">
+                                    <h2>75%</h2>
+                                    <p>Completed</p>
+                                </div>
+                            </div>
+
+                            <div class="progress-details">
+                                <div class="progress-detail">
+                                    <span class="legend purple-bg"></span>
+                                    <span>Completed</span>
+                                    <strong>12 Tasks</strong>
+                                </div>
+
+                                <div class="progress-detail">
+                                    <span class="legend orange-bg"></span>
+                                    <span>In Progress</span>
+                                    <strong>08 Tasks</strong>
+                                </div>
+
+                                <div class="progress-detail">
+                                    <span class="legend grey-bg"></span>
+                                    <span>Remaining</span>
+                                    <strong>04 Tasks</strong>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="content-card activity-card">
+
+                        <div class="card-heading">
+                            <div>
+                                <h3>Today's Focus</h3>
+                                <p>Your daily productivity goal</p>
+                            </div>
+
+                            <span class="focus-date">09 Nov</span>
+                        </div>
+
+                        <div class="focus-progress">
+                            <div class="focus-text">
+                                <span>Daily target</span>
+                                <strong>3 of 5 tasks</strong>
+                            </div>
+
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+
+                        <div class="focus-message">
+                            <span>✦</span>
+                            <p>You're doing great! Keep up the momentum.</p>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Tasks Section -->
+                <section class="tasks-section">
+
+                    <div class="tasks-heading">
+
+                        <div>
+                            <h2>My Tasks</h2>
+                            <p>Manage and organize your daily work.</p>
+                        </div>
+
+                        <div class="task-filters">
+                            <button class="filter-btn selected">All Tasks</button>
+                            <button class="filter-btn">In Progress</button>
+                            <button class="filter-btn">Completed</button>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Add Task Form -->
+                    <form class="add-task-form" id="taskForm">
+
+                        <div class="task-input-wrapper">
+                            <span>＋</span>
+                            <input type="text" id="taskInput" placeholder="What needs to be done?">
+                        </div>
+
+                        <select id="taskPriority">
+                            <option value="Medium">Medium Priority</option>
+                            <option value="High">High Priority</option>
+                            <option value="Low">Low Priority</option>
+                        </select>
+<!--                         
+                    <button class="primary-btn" >
+                        <span>＋</span> Add New Task
+                    </button> -->
+
+                        <button type="submit" id="addTaskBtn" class="add-btn">Add Task</button>
+
+                    </form>
+
+
+                    <!-- Task List -->
+                    <div class="task-list" id="taskList">
+
+                        <div class="task-item">
+
+                            <label class="task-checkbox">
+                                <input type="checkbox">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <div class="task-info">
+                                <h4>Complete TypeScript practice</h4>
+                                <p>Learn functions and event listeners</p>
+                            </div>
+
+                            <span class="priority high">High</span>
+                            <span class="task-date">Today</span>
+                            <span class="task-menu">•••</span>
+
+                        </div>
+
+
+                        <div class="task-item">
+
+                            <label class="task-checkbox">
+                                <input type="checkbox">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <div class="task-info">
+                                <h4>Work on portfolio website</h4>
+                                <p>Improve responsive layout and animations</p>
+                            </div>
+
+                            <span class="priority medium">Medium</span>
+                            <span class="task-date">Today</span>
+                            <span class="task-menu">•••</span>
+
+                        </div>
+
+
+                        <div class="task-item">
+
+                            <label class="task-checkbox">
+                                <input type="checkbox">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <div class="task-info">
+                                <h4>Study Data Structures</h4>
+                                <p>Practice arrays and linked lists</p>
+                            </div>
+
+                            <span class="priority low">Low</span>
+                            <span class="task-date">Tomorrow</span>
+                            <span class="task-menu">•••</span>
+
+                        </div>
+
+
+                        <div class="task-item">
+
+                            <label class="task-checkbox">
+                                <input type="checkbox">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <div class="task-info">
+                                <h4>Prepare for internship</h4>
+                                <p>Revise JavaScript fundamentals</p>
+                            </div>
+
+                            <span class="priority high">High</span>
+                            <span class="task-date">Tomorrow</span>
+                            <span class="task-menu">•••</span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="tasks-footer">
+                        <p>Showing <strong>4</strong> of <strong>24</strong> tasks</p>
+                        <button class="view-all-btn">View all tasks →</button>
+                    </div>
+
+                </section>
+
+            </div>
+
+        </main>
+
+    </div>
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
