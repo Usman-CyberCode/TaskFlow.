@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const checkmark = document.createElement("span");
             checkmark.className = "checkmark";
 
-          
+
             const taskInfo = document.createElement("div");
             taskInfo.className = "task-info";
 
@@ -153,19 +153,43 @@ document.addEventListener("DOMContentLoaded", () => {
             dateElement.className = "task-date";
             dateElement.textContent = "Today";
 
+            const menuContainer = document.createElement("div");
+            menuContainer.className = "task-menu-container";
+
+            const menuButton = document.createElement("button");
+            menuButton.className = "task-menu";
+            menuButton.textContent = "•••";
+
+            const dropdown = document.createElement("div");
+            dropdown.className = "task-dropdown";
+
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+            editButton.className = "dropdown-edit";
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.className = "dropdown-delete";
+
+
             taskItem.appendChild(checkboxLabel);
             checkboxLabel.appendChild(checkbox);
             checkboxLabel.appendChild(checkmark);
-
             taskInfo.appendChild(heading);
             taskInfo.appendChild(description);
+            dropdown.appendChild(editButton);
+            dropdown.appendChild(deleteButton);
+            menuContainer.appendChild(menuButton);
+            menuContainer.appendChild(dropdown);
 
             taskItem.appendChild(taskInfo);
             taskItem.appendChild(priorityElement);
             taskList.appendChild(taskItem);
             taskItem.appendChild(dateElement);
+            taskItem.appendChild(menuContainer);
 
-
+            
+        taskList.prepend(taskItem);
         });
     }
 
@@ -203,9 +227,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     function deleteTask(target: HTMLElement) {
         const taskItem = target.closest(".task-item");
+
+        const taskTitle = taskItem?.querySelector("h4")?.textContent;
+
+        tasks = tasks.filter((task) => task.title !== taskTitle);
+
+        saveTasks();
+
         taskItem?.remove();
     }
-
     function toggleTask(event: Event) {
         const checkbox = event.target as HTMLInputElement;
         const taskItem = checkbox.closest(".task-item");
@@ -219,12 +249,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const taskTitle = taskItem?.querySelector("h4")?.textContent;
 
-const task = tasks.find((t) => t.title === taskTitle);
+        const task = tasks.find((t) => t.title === taskTitle);
 
-if (task) {
-    task.completed = checkbox.checked;
-    saveTasks();
-}
+        if (task) {
+            task.completed = checkbox.checked;
+            saveTasks();
+        }
 
     }
     taskList.addEventListener("change", (event) => {
@@ -282,6 +312,7 @@ if (task) {
 
             const newName = nameInput.value.trim();
 
+            
             if (newName === "") {
                 alert("Task name cannot be empty!");
                 return;
@@ -293,6 +324,15 @@ if (task) {
             const newPriority = document.createElement("span");
             newPriority.className = `priority ${prioritySelect.value.toLowerCase()}`;
             newPriority.textContent = prioritySelect.value;
+            const oldName = heading.textContent;
+            const task = tasks.find((t) => t.title === oldName);
+
+            if (task) {
+                task.title = newName;
+                task.priority = prioritySelect.value;
+                saveTasks();
+            }
+
 
             nameInput.replaceWith(newHeading);
             prioritySelect.replaceWith(newPriority);

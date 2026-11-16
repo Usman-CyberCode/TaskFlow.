@@ -107,15 +107,34 @@ document.addEventListener("DOMContentLoaded", () => {
             const dateElement = document.createElement("span");
             dateElement.className = "task-date";
             dateElement.textContent = "Today";
+            const menuContainer = document.createElement("div");
+            menuContainer.className = "task-menu-container";
+            const menuButton = document.createElement("button");
+            menuButton.className = "task-menu";
+            menuButton.textContent = "•••";
+            const dropdown = document.createElement("div");
+            dropdown.className = "task-dropdown";
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+            editButton.className = "dropdown-edit";
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.className = "dropdown-delete";
             taskItem.appendChild(checkboxLabel);
             checkboxLabel.appendChild(checkbox);
             checkboxLabel.appendChild(checkmark);
             taskInfo.appendChild(heading);
             taskInfo.appendChild(description);
+            dropdown.appendChild(editButton);
+            dropdown.appendChild(deleteButton);
+            menuContainer.appendChild(menuButton);
+            menuContainer.appendChild(dropdown);
             taskItem.appendChild(taskInfo);
             taskItem.appendChild(priorityElement);
             taskList.appendChild(taskItem);
             taskItem.appendChild(dateElement);
+            taskItem.appendChild(menuContainer);
+            taskList.prepend(taskItem);
         });
     }
     let currentlyEditing = null;
@@ -150,6 +169,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     function deleteTask(target) {
         const taskItem = target.closest(".task-item");
+        const taskTitle = taskItem?.querySelector("h4")?.textContent;
+        tasks = tasks.filter((task) => task.title !== taskTitle);
+        saveTasks();
         taskItem?.remove();
     }
     function toggleTask(event) {
@@ -220,6 +242,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const newPriority = document.createElement("span");
             newPriority.className = `priority ${prioritySelect.value.toLowerCase()}`;
             newPriority.textContent = prioritySelect.value;
+            const oldName = heading.textContent;
+            const task = tasks.find((t) => t.title === oldName);
+            if (task) {
+                task.title = newName;
+                task.priority = prioritySelect.value;
+                saveTasks();
+            }
             nameInput.replaceWith(newHeading);
             prioritySelect.replaceWith(newPriority);
             saveButton.remove();
