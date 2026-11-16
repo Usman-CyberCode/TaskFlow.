@@ -4,8 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const taskList = document.getElementById("taskList");
     const taskInput = document.getElementById("taskInput");
     console.log("Script Loaded!");
+    let tasks = [];
     function addTask() {
-        console.log("Add Task Function Called!");
         const taskName = taskInput.value.trim();
         const priority = taskPriority.value;
         if (taskName === "") {
@@ -20,15 +20,31 @@ document.addEventListener("DOMContentLoaded", () => {
         heading.textContent = taskName;
         const description = document.createElement("p");
         description.textContent = "NEW TASK";
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-        deleteButton.className = "delete-btn";
+        const checkboxLabel = document.createElement("label");
+        checkboxLabel.className = "task-checkbox";
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
-        checkbox.className = "task-checkbox-input";
+        const checkmark = document.createElement("span");
+        checkmark.className = "checkmark";
+        checkboxLabel.appendChild(checkbox);
+        checkboxLabel.appendChild(checkmark);
+        const menuContainer = document.createElement("div");
+        menuContainer.className = "task-menu-container";
+        const menuButton = document.createElement("button");
+        menuButton.className = "task-menu";
+        menuButton.textContent = "•••";
+        const dropdown = document.createElement("div");
+        dropdown.className = "task-dropdown";
         const editButton = document.createElement("button");
         editButton.textContent = "Edit";
-        editButton.className = "edit-btn";
+        editButton.className = "dropdown-edit";
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.className = "dropdown-delete";
+        dropdown.appendChild(editButton);
+        dropdown.appendChild(deleteButton);
+        menuContainer.appendChild(menuButton);
+        menuContainer.appendChild(dropdown);
         taskInfo.appendChild(heading);
         taskInfo.appendChild(description);
         const priorityElement = document.createElement("span");
@@ -37,30 +53,105 @@ document.addEventListener("DOMContentLoaded", () => {
         const dateElement = document.createElement("span");
         dateElement.className = "task-date";
         dateElement.textContent = "Today";
-        taskItem.appendChild(checkbox);
+        taskItem.appendChild(checkboxLabel);
         taskItem.appendChild(taskInfo);
         taskItem.appendChild(priorityElement);
         taskItem.appendChild(dateElement);
-        taskItem.appendChild(editButton);
-        taskItem.appendChild(deleteButton);
+        taskItem.appendChild(menuContainer);
+        const taskData = {
+            title: taskInput.value.trim(),
+            priority: taskPriority.value,
+            completed: false
+        };
+        console.log(taskData);
+        tasks.push(taskData);
+        console.log(tasks);
+        saveTasks();
         taskList.prepend(taskItem);
         taskInput.value = "";
         console.log("Task Added Successfully!");
     }
-    function deleteTask(event) {
-        const button = event.target;
-        const taskItem = button.closest(".task-item");
-        taskItem?.remove();
+    function saveTasks() {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
     }
+    function loadTasks() {
+        const savedTasks = localStorage.getItem("tasks");
+        if (savedTasks) {
+            tasks = JSON.parse(savedTasks);
+        }
+    }
+    function renderTasks() {
+        taskList.innerHTML = "";
+        tasks.forEach((task) => {
+            const taskItem = document.createElement("div");
+            taskItem.className = "task-item";
+            if (task.completed) {
+                taskItem.classList.add("completed");
+            }
+            const checkboxLabel = document.createElement("label");
+            checkboxLabel.className = "task-checkbox";
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = task.completed;
+            const checkmark = document.createElement("span");
+            checkmark.className = "checkmark";
+            const taskInfo = document.createElement("div");
+            taskInfo.className = "task-info";
+            const heading = document.createElement("h4");
+            heading.textContent = task.title;
+            const description = document.createElement("p");
+            description.textContent = "NEW TASK";
+            const priorityElement = document.createElement("span");
+            priorityElement.className = `priority ${task.priority.toLowerCase()}`;
+            priorityElement.textContent = task.priority;
+            const dateElement = document.createElement("span");
+            dateElement.className = "task-date";
+            dateElement.textContent = "Today";
+            taskItem.appendChild(checkboxLabel);
+            checkboxLabel.appendChild(checkbox);
+            checkboxLabel.appendChild(checkmark);
+            taskInfo.appendChild(heading);
+            taskInfo.appendChild(description);
+            taskItem.appendChild(taskInfo);
+            taskItem.appendChild(priorityElement);
+            taskList.appendChild(taskItem);
+            taskItem.appendChild(dateElement);
+        });
+    }
+    let currentlyEditing = null;
     taskList.addEventListener("click", (event) => {
         const target = event.target;
-        if (target.classList.contains("delete-btn")) {
-            deleteTask(event);
+        if (target.classList.contains("task-menu")) {
+            const currentMenu = target.nextElementSibling;
+            document.querySelectorAll(".task-dropdown").forEach((menu) => {
+                if (menu !== currentMenu) {
+                    menu.classList.remove("show");
+                }
+            });
+            currentMenu.classList.toggle("show");
         }
-        if (target.classList.contains("edit-btn")) {
+        if (target.classList.contains("dropdown-edit")) {
+            if (currentlyEditing) {
+                alert("Please save or cancel the current task first!");
+                return;
+            }
+            const taskItem = target.closest(".task-item");
+            taskItem.querySelector(".task-dropdown")?.classList.remove("show");
+            currentlyEditing = taskItem;
             editTask(event);
         }
+        if (target.classList.contains("dropdown-delete")) {
+            if (currentlyEditing) {
+                alert("Please save or cancel editing first!");
+                return;
+            }
+            deleteTask(target);
+        }
     });
+    function deleteTask(target) {
+        const taskItem = target.closest(".task-item");
+        taskItem?.remove();
+    }
     function toggleTask(event) {
         const checkbox = event.target;
         const taskItem = checkbox.closest(".task-item");
@@ -89,11 +180,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         const heading = taskItem.querySelector("h4");
         const priorityElement = taskItem.querySelector(".priority");
-        // Create input for task name
+        const menuContainer = taskItem.querySelector(".task-menu-container");
+        menuContainer.style.display = "none";
         const nameInput = document.createElement("input");
         nameInput.type = "text";
         nameInput.value = heading.textContent || "";
-        // Create select for priority
         const prioritySelect = document.createElement("select");
         ["High", "Medium", "Low"].forEach((priority) => {
             const option = document.createElement("option");
@@ -102,20 +193,16 @@ document.addEventListener("DOMContentLoaded", () => {
             prioritySelect.appendChild(option);
         });
         prioritySelect.value = priorityElement.textContent || "Medium";
-        // Save button
         const saveButton = document.createElement("button");
         saveButton.textContent = "Save";
-        saveButton.className = "savebtn";
-        // Cancel button
+        saveButton.className = "save-btn";
         const cancelButton = document.createElement("button");
         cancelButton.textContent = "Cancel";
-        cancelButton.className = "canclebtn";
-        // Replace existing content
+        cancelButton.className = "cancel-btn";
         heading.replaceWith(nameInput);
         priorityElement.replaceWith(prioritySelect);
-        button.replaceWith(saveButton);
+        taskItem.appendChild(saveButton);
         taskItem.appendChild(cancelButton);
-        // Save changes
         saveButton.addEventListener("click", () => {
             const newName = nameInput.value.trim();
             if (newName === "") {
@@ -129,16 +216,21 @@ document.addEventListener("DOMContentLoaded", () => {
             newPriority.textContent = prioritySelect.value;
             nameInput.replaceWith(newHeading);
             prioritySelect.replaceWith(newPriority);
-            saveButton.replaceWith(button);
+            saveButton.remove();
             cancelButton.remove();
+            menuContainer.style.display = "";
+            currentlyEditing = null;
         });
-        // Cancel editing
         cancelButton.addEventListener("click", () => {
             nameInput.replaceWith(heading);
             prioritySelect.replaceWith(priorityElement);
-            saveButton.replaceWith(button);
+            saveButton.remove();
             cancelButton.remove();
+            menuContainer.style.display = "";
+            currentlyEditing = null;
         });
     }
+    loadTasks();
+    renderTasks();
 });
 export {};
