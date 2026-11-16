@@ -3,6 +3,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const taskPriority = document.getElementById("taskPriority");
     const taskList = document.getElementById("taskList");
     const taskInput = document.getElementById("taskInput");
+    const searchInput = document.getElementById("searchInput");
+    const filterButtons = document.querySelectorAll(".filter-btn");
+    let currentFilter = "all";
     console.log("Script Loaded!");
     let tasks = [];
     function addTask() {
@@ -263,6 +266,57 @@ document.addEventListener("DOMContentLoaded", () => {
             cancelButton.remove();
             menuContainer.style.display = "";
             currentlyEditing = null;
+        });
+    }
+    function searchTasks() {
+        const searchValue = searchInput.value.toLowerCase().trim();
+        const taskItems = taskList.querySelectorAll(".task-item");
+        taskItems.forEach((item) => {
+            const title = item.querySelector("h4")?.textContent?.toLowerCase() || "";
+            if (title.includes(searchValue)) {
+                item.style.display = "";
+            }
+            else {
+                item.style.display = "none";
+            }
+        });
+    }
+    searchInput.addEventListener("input", () => {
+        searchTasks();
+    });
+    filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            console.log(button.textContent);
+        });
+    });
+    filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            const filterText = button.textContent?.trim();
+            if (filterText === "All Tasks") {
+                currentFilter = "all";
+            }
+            else if (filterText === "In Progress") {
+                currentFilter = "progress";
+            }
+            else if (filterText === "Completed") {
+                currentFilter = "completed";
+            }
+            applyFilter();
+        });
+    });
+    function applyFilter() {
+        const taskItems = taskList.querySelectorAll(".task-item");
+        taskItems.forEach((item) => {
+            const isCompleted = item.classList.contains("completed");
+            if (currentFilter === "all") {
+                item.style.display = "";
+            }
+            else if (currentFilter === "progress") {
+                item.style.display = isCompleted ? "none" : "";
+            }
+            else if (currentFilter === "completed") {
+                item.style.display = isCompleted ? "" : "none";
+            }
         });
     }
     loadTasks();

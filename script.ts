@@ -6,7 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const taskPriority = document.getElementById("taskPriority") as HTMLSelectElement;
     const taskList = document.getElementById("taskList") as HTMLDivElement;
     const taskInput = document.getElementById("taskInput") as HTMLInputElement;
+    const searchInput = document.getElementById("searchInput") as HTMLInputElement;
+    const filterButtons = document.querySelectorAll(".filter-btn");
 
+    let currentFilter = "all";
     console.log("Script Loaded!");
 
 
@@ -188,8 +191,8 @@ document.addEventListener("DOMContentLoaded", () => {
             taskItem.appendChild(dateElement);
             taskItem.appendChild(menuContainer);
 
-            
-        taskList.prepend(taskItem);
+
+            taskList.prepend(taskItem);
         });
     }
 
@@ -312,7 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const newName = nameInput.value.trim();
 
-            
+
             if (newName === "") {
                 alert("Task name cannot be empty!");
                 return;
@@ -358,6 +361,65 @@ document.addEventListener("DOMContentLoaded", () => {
             currentlyEditing = null;
         });
     }
+    function searchTasks() {
+        const searchValue = searchInput.value.toLowerCase().trim();
+
+        const taskItems = taskList.querySelectorAll(".task-item");
+
+        taskItems.forEach((item) => {
+            const title = item.querySelector("h4")?.textContent?.toLowerCase() || "";
+
+            if (title.includes(searchValue)) {
+                (item as HTMLElement).style.display = "";
+            } else {
+                (item as HTMLElement).style.display = "none";
+            }
+        });
+    }
+    searchInput.addEventListener("input", () => {
+        searchTasks();
+    });
+    filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            console.log(button.textContent);
+        });
+    });
+    filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+
+            const filterText = button.textContent?.trim();
+
+            if (filterText === "All Tasks") {
+                currentFilter = "all";
+            }
+            else if (filterText === "In Progress") {
+                currentFilter = "progress";
+            }
+            else if (filterText === "Completed") {
+                currentFilter = "completed";
+            }
+            applyFilter();
+        });
+    });
+    function applyFilter() {
+        const taskItems = taskList.querySelectorAll(".task-item");
+
+        taskItems.forEach((item) => {
+            const isCompleted = item.classList.contains("completed");
+
+            if (currentFilter === "all") {
+                (item as HTMLElement).style.display = "";
+            }
+            else if (currentFilter === "progress") {
+                (item as HTMLElement).style.display = isCompleted ? "none" : "";
+            }
+            else if (currentFilter === "completed") {
+                (item as HTMLElement).style.display = isCompleted ? "" : "none";
+            }
+        });
+    }
+
+
 
     loadTasks();
     renderTasks();
