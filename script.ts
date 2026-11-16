@@ -257,6 +257,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (task) {
             task.completed = checkbox.checked;
             saveTasks();
+            applyFilter();
         }
 
     }
@@ -399,6 +400,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentFilter = "completed";
             }
             applyFilter();
+            filterButtons.forEach((btn) => {
+                btn.classList.remove("selected");
+            });
+
+            button.classList.add("selected");
         });
     });
     function applyFilter() {
@@ -415,6 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             else if (currentFilter === "completed") {
                 (item as HTMLElement).style.display = isCompleted ? "" : "none";
+
             }
         });
     }

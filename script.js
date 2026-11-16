@@ -193,6 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (task) {
             task.completed = checkbox.checked;
             saveTasks();
+            applyFilter();
         }
     }
     taskList.addEventListener("change", (event) => {
@@ -302,6 +303,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 currentFilter = "completed";
             }
             applyFilter();
+            filterButtons.forEach((btn) => {
+                btn.classList.remove("selected");
+            });
+            button.classList.add("selected");
         });
     });
     function applyFilter() {
