@@ -163,6 +163,12 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Tak In Progress");
             taskItem?.classList.remove("completed");
         }
+        const taskTitle = taskItem?.querySelector("h4")?.textContent;
+        const task = tasks.find((t) => t.title === taskTitle);
+        if (task) {
+            task.completed = checkbox.checked;
+            saveTasks();
+        }
     }
     taskList.addEventListener("change", (event) => {
         console.log("Checkbox Changed!");
