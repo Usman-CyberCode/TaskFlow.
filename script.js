@@ -5,12 +5,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const taskInput = document.getElementById("taskInput");
     const searchInput = document.getElementById("searchInput");
     const filterButtons = document.querySelectorAll(".filter-btn");
+    const totalTasksElement = document.getElementById("totalTasks");
+    const inProgressTasksElement = document.getElementById("inProgressTasks");
+    const completedTasksElement = document.getElementById("completedTasks");
+    const progressPercentageElement = document.getElementById("progressPercentage");
+    const progressCompletedElement = document.getElementById("progressCompleted");
+    const progressInProgressElement = document.getElementById("progressInProgress");
+    const progressRemainingElement = document.getElementById("progressRemaining");
+    const progressCircleElement = document.querySelector(".progress-circle");
+    const taskStatus = document.getElementById("taskStatus");
+    const notStartedTasksElement = document.getElementById("notStartedTasks");
     let currentFilter = "all";
     console.log("Script Loaded!");
     let tasks = [];
     function addTask() {
         const taskName = taskInput.value.trim();
         const priority = taskPriority.value;
+        const status = taskStatus.value;
         if (taskName === "") {
             alert("Please enter a task!");
             return;
@@ -22,11 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const heading = document.createElement("h4");
         heading.textContent = taskName;
         const description = document.createElement("p");
-        description.textContent = "NEW TASK";
+        description.textContent = status.replace("-", " ").toUpperCase();
         const checkboxLabel = document.createElement("label");
         checkboxLabel.className = "task-checkbox";
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
+        checkbox.checked = status === "completed";
         const checkmark = document.createElement("span");
         checkmark.className = "checkmark";
         checkboxLabel.appendChild(checkbox);
@@ -64,12 +76,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const taskData = {
             title: taskInput.value.trim(),
             priority: taskPriority.value,
-            completed: false
+            completed: status === "completed",
+            status: status
         };
         console.log(taskData);
         tasks.push(taskData);
         console.log(tasks);
         saveTasks();
+        updateStats();
         taskList.prepend(taskItem);
         taskInput.value = "";
         console.log("Task Added Successfully!");
@@ -103,7 +117,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const heading = document.createElement("h4");
             heading.textContent = task.title;
             const description = document.createElement("p");
-            description.textContent = "NEW TASK";
+            const status = task.status || (task.completed ? "completed" : "in-progress");
+            description.textContent = status.replace("-", " ").toUpperCase();
             const priorityElement = document.createElement("span");
             priorityElement.className = `priority ${task.priority.toLowerCase()}`;
             priorityElement.textContent = task.priority;
@@ -175,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const taskTitle = taskItem?.querySelector("h4")?.textContent;
         tasks = tasks.filter((task) => task.title !== taskTitle);
         saveTasks();
+        updateStats();
         taskItem?.remove();
     }
     function toggleTask(event) {
@@ -192,8 +208,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const task = tasks.find((t) => t.title === taskTitle);
         if (task) {
             task.completed = checkbox.checked;
+            task.status = checkbox.checked
+                ? "completed"
+                : "in-progress";
             saveTasks();
             applyFilter();
+            updateStats();
         }
     }
     taskList.addEventListener("change", (event) => {
@@ -302,6 +322,9 @@ document.addEventListener("DOMContentLoaded", () => {
             else if (filterText === "Completed") {
                 currentFilter = "completed";
             }
+            else if (filterText === "Not Started") {
+                currentFilter = "not-started";
+            }
             applyFilter();
             filterButtons.forEach((btn) => {
                 btn.classList.remove("selected");
@@ -313,18 +336,43 @@ document.addEventListener("DOMContentLoaded", () => {
         const taskItems = taskList.querySelectorAll(".task-item");
         taskItems.forEach((item) => {
             const isCompleted = item.classList.contains("completed");
+            const description = item.querySelector("p")?.textContent?.trim();
             if (currentFilter === "all") {
                 item.style.display = "";
             }
             else if (currentFilter === "progress") {
-                item.style.display = isCompleted ? "none" : "";
+                item.style.display =
+                    description === "IN PROGRESS" ? "" : "none";
+            }
+            else if (currentFilter === "not-started") {
+                item.style.display =
+                    description === "NOT STARTED" ? "" : "none";
             }
             else if (currentFilter === "completed") {
-                item.style.display = isCompleted ? "" : "none";
+                item.style.display =
+                    isCompleted ? "" : "none";
             }
         });
     }
+    function updateStats() {
+        const total = tasks.length;
+        const completed = tasks.filter((task) => task.status === "completed" || (!task.status && task.completed)).length;
+        const inProgress = tasks.filter((task) => task.status === "in-progress").length;
+        const notStarted = tasks.filter((task) => task.status === "not-started").length;
+        const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
+        progressPercentageElement.textContent = `${percentage}%`;
+        progressCircleElement.style.background =
+            `conic-gradient(var(--primary) 0% ${percentage}%, #eeeafc ${percentage}% 100%)`;
+        progressCompletedElement.textContent = `${completed} Tasks`;
+        progressInProgressElement.textContent = `${inProgress} Tasks`;
+        progressRemainingElement.textContent = `${total - completed} Tasks`;
+        totalTasksElement.textContent = total.toString();
+        completedTasksElement.textContent = completed.toString();
+        inProgressTasksElement.textContent = inProgress.toString();
+        notStartedTasksElement.textContent = notStarted.toString();
+    }
     loadTasks();
     renderTasks();
+    updateStats();
 });
 export {};

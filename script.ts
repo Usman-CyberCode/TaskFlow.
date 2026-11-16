@@ -8,6 +8,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const taskInput = document.getElementById("taskInput") as HTMLInputElement;
     const searchInput = document.getElementById("searchInput") as HTMLInputElement;
     const filterButtons = document.querySelectorAll(".filter-btn");
+    const totalTasksElement = document.getElementById("totalTasks") as HTMLHeadingElement;
+    const inProgressTasksElement = document.getElementById("inProgressTasks") as HTMLHeadingElement;
+    const completedTasksElement = document.getElementById("completedTasks") as HTMLHeadingElement;
+    const progressPercentageElement = document.getElementById("progressPercentage") as HTMLHeadingElement;
+    const progressCompletedElement = document.getElementById("progressCompleted") as HTMLElement;
+    const progressInProgressElement = document.getElementById("progressInProgress") as HTMLElement;
+    const progressRemainingElement = document.getElementById("progressRemaining") as HTMLElement;
+    const progressCircleElement = document.querySelector(".progress-circle") as HTMLDivElement;
+    const taskStatus = document.getElementById("taskStatus") as HTMLSelectElement;
+    const notStartedTasksElement = document.getElementById("notStartedTasks") as HTMLHeadingElement;
 
     let currentFilter = "all";
     console.log("Script Loaded!");
@@ -17,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         title: string;
         priority: string;
         completed: boolean;
+        status: string;
     }[] = [];
 
     function addTask() {
@@ -24,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const taskName = taskInput.value.trim();
         const priority = taskPriority.value;
+        const status = taskStatus.value;
         if (taskName === "") {
             alert("Please enter a task!");
             return;
@@ -38,13 +50,14 @@ document.addEventListener("DOMContentLoaded", () => {
         heading.textContent = taskName;
 
         const description = document.createElement("p");
-        description.textContent = "NEW TASK";
+        description.textContent = status.replace("-", " ").toUpperCase();
 
         const checkboxLabel = document.createElement("label");
         checkboxLabel.className = "task-checkbox";
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
+        checkbox.checked = status === "completed";
 
         const checkmark = document.createElement("span");
         checkmark.className = "checkmark";
@@ -92,11 +105,11 @@ document.addEventListener("DOMContentLoaded", () => {
         taskItem.appendChild(priorityElement);
         taskItem.appendChild(dateElement);
         taskItem.appendChild(menuContainer);
-
         const taskData = {
             title: taskInput.value.trim(),
             priority: taskPriority.value,
-            completed: false
+            completed: status === "completed",
+            status: status
         };
 
         console.log(taskData);
@@ -104,6 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(tasks);
 
         saveTasks();
+        updateStats();
 
         taskList.prepend(taskItem);
         taskInput.value = "";
@@ -146,7 +160,8 @@ document.addEventListener("DOMContentLoaded", () => {
             heading.textContent = task.title;
 
             const description = document.createElement("p");
-            description.textContent = "NEW TASK";
+            const status = task.status || (task.completed ? "completed" : "in-progress");
+            description.textContent = status.replace("-", " ").toUpperCase();
 
             const priorityElement = document.createElement("span");
             priorityElement.className = `priority ${task.priority.toLowerCase()}`;
@@ -236,6 +251,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tasks = tasks.filter((task) => task.title !== taskTitle);
 
         saveTasks();
+        updateStats();
 
         taskItem?.remove();
     }
@@ -256,10 +272,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (task) {
             task.completed = checkbox.checked;
+
+            task.status = checkbox.checked
+                ? "completed"
+                : "in-progress";
+
             saveTasks();
             applyFilter();
+            updateStats();
         }
-
     }
     taskList.addEventListener("change", (event) => {
         console.log("Checkbox Changed!");
@@ -399,6 +420,9 @@ document.addEventListener("DOMContentLoaded", () => {
             else if (filterText === "Completed") {
                 currentFilter = "completed";
             }
+            else if (filterText === "Not Started") {
+    currentFilter = "not-started";
+}
             applyFilter();
             filterButtons.forEach((btn) => {
                 btn.classList.remove("selected");
@@ -408,26 +432,62 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
     function applyFilter() {
-        const taskItems = taskList.querySelectorAll(".task-item");
+    const taskItems = taskList.querySelectorAll(".task-item");
 
-        taskItems.forEach((item) => {
-            const isCompleted = item.classList.contains("completed");
+    taskItems.forEach((item) => {
+        const isCompleted = item.classList.contains("completed");
 
-            if (currentFilter === "all") {
-                (item as HTMLElement).style.display = "";
-            }
-            else if (currentFilter === "progress") {
-                (item as HTMLElement).style.display = isCompleted ? "none" : "";
-            }
-            else if (currentFilter === "completed") {
-                (item as HTMLElement).style.display = isCompleted ? "" : "none";
+        const description = item.querySelector("p")?.textContent?.trim();
 
-            }
-        });
+        if (currentFilter === "all") {
+            (item as HTMLElement).style.display = "";
+        }
+        else if (currentFilter === "progress") {
+            (item as HTMLElement).style.display =
+                description === "IN PROGRESS" ? "" : "none";
+        }
+        else if (currentFilter === "not-started") {
+            (item as HTMLElement).style.display =
+                description === "NOT STARTED" ? "" : "none";
+        }
+        else if (currentFilter === "completed") {
+            (item as HTMLElement).style.display =
+                isCompleted ? "" : "none";
+        }
+    });
+}
+    function updateStats() {
+
+        const total = tasks.length;
+
+        const completed = tasks.filter(
+            (task) => task.status === "completed" || (!task.status && task.completed)
+        ).length;
+
+        const inProgress = tasks.filter(
+            (task) => task.status === "in-progress"
+        ).length;
+
+        const notStarted = tasks.filter(
+            (task) => task.status === "not-started"
+        ).length;
+        const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
+        progressPercentageElement.textContent = `${percentage}%`;
+        progressCircleElement.style.background =
+            `conic-gradient(var(--primary) 0% ${percentage}%, #eeeafc ${percentage}% 100%)`;
+        progressCompletedElement.textContent = `${completed} Tasks`;
+        progressInProgressElement.textContent = `${inProgress} Tasks`;
+progressRemainingElement.textContent = `${total - completed} Tasks`;        
+        totalTasksElement.textContent = total.toString();
+        completedTasksElement.textContent = completed.toString();
+        inProgressTasksElement.textContent = inProgress.toString();
+        notStartedTasksElement.textContent = notStarted.toString();
+
     }
 
 
 
     loadTasks();
     renderTasks();
+    updateStats();
 });
